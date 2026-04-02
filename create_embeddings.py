@@ -26,13 +26,19 @@ def pdf_processing_pipeline(pdf_name: str):
     # Chunking the data and creating embeddings
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=100)
     split_pages = text_splitter.split_documents(document)
-    for i, doc in enumerate(split_pages):
-        embeddings = generate_embeddings(doc.page_content)
-        upsert_embeddings(collection_name, embeddings)
-        print(f"{i}th embedding inserted into DB")
+
+    texts_list = [doc.page_content for doc in split_pages]
+
+    if texts_list:
+        embeddings = generate_embeddings(texts_list)
+        if embeddings is not None:
+            # `embeddings` will be a 2D numpy array of shape (N, D) when batched
+            embeddings_list = [emb for emb in embeddings]
+            upsert_embeddings(collection_name, embeddings_list, texts_list)
+            print(f"Successfully inserted {len(embeddings_list)} embeddings into DB")
 
 
-def generate_embeddings(payload: str):
+def generate_embeddings(payload: list[str] | str):
     OLLAMA_IP = os.getenv("OLLAMA_PROVIDER_IP")
     request_url = f"http://{OLLAMA_IP}:11434/api/embed"
     try:
@@ -42,6 +48,7 @@ def generate_embeddings(payload: str):
             timeout=30,
         )
         embeddings = np.array(response.json()["embeddings"], dtype=np.float32)
-        return embeddings.shape
+        return embeddings
     except Exception as e:
-        print(e)
+        print(f"Error generating embeddings: {e}")
+        return None

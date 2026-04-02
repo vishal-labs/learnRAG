@@ -1,0 +1,4 @@
+- [x] Implement a PDF ingestion pipeline
+- [x] Insert Data into Qdrant localDB
+- [ ] Understand and implement client.Query part for the DB
+- [ ] Implement a RAG chain for question answering
