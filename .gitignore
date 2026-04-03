@@ -12,3 +12,4 @@ wheels/
 .env/*
 .env*
 IMPL.md
+.DS_Store

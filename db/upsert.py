@@ -7,7 +7,7 @@ import uuid
 client = QdrantClient(url="http://localhost:6333")
 
 
-def upsert_embeddings(collection_name: str, embeddings_list, texts_list=None):
+def upsert_embeddings(collection_name: str, embeddings_list, texts_list):
 
     if not client.collection_exists(collection_name=collection_name):
         # Creating a test collection, which loosely related to being a table in SQL
@@ -25,7 +25,7 @@ def upsert_embeddings(collection_name: str, embeddings_list, texts_list=None):
             point = models.PointStruct(
                 id=str(uuid.uuid4()),
                 vector=embed,
-                payload={"text_str": texts_list[i], "chunk_id": i}
+                payload={"text_str": texts_list[i], "chunk_id": i},
             )
             points.append(point)
         client.upsert(collection_name=collection_name, points=points)
@@ -36,18 +36,21 @@ def upsert_embeddings(collection_name: str, embeddings_list, texts_list=None):
 def query_collection(collection_name, query_text, limit=5):
     try:
         from create_embeddings import generate_embeddings
+
         # Generate embedding for the query text
         query_embedding = generate_embeddings(query_text)
 
         # Search for similar vectors
-        search_result = client.search(
+        search_result = client.query_points(
             collection_name=collection_name,
-            query_vector=query_embedding[0].tolist()
+            query=query_embedding[0].tolist()
             if hasattr(query_embedding[0], "tolist")
             else query_embedding[0],
             limit=limit,
         )
-        return search_result
+
+        return search_result.points
+
     except Exception as e:
         print(f"Error querying collection: {e}")
         return []
