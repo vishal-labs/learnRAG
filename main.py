@@ -5,12 +5,12 @@ from query_llm import get_result_from_model
 
 
 def main():
-    pdf_processing_pipeline("QA.pdf")
+    # pdf_processing_pipeline("QA.pdf")
     query = str(input("What do you want to ask about this pdf?: \n"))
     query_result = query_collection(
         collection_name="pdf_embeddings_collection",
         query_text=query,
-        limit=2,
+        limit=5,
     )
     payloads = []
     for point in query_result:
