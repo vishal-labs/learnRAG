@@ -1,16 +1,14 @@
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 import uuid
+from embeddings import embeddings as emb
 
-
-# connecting to the client
 client = QdrantClient(url="http://localhost:6333")
 
 
 def upsert_embeddings(collection_name: str, embeddings_list, texts_list):
 
     if not client.collection_exists(collection_name=collection_name):
-        # Creating a test collection, which loosely related to being a table in SQL
         client.create_collection(
             collection_name=collection_name,
             vectors_config=models.VectorParams(
@@ -18,7 +16,6 @@ def upsert_embeddings(collection_name: str, embeddings_list, texts_list):
             ),
         )
 
-    # Insert the actual vector points
     try:
         points = []
         for i, embed in enumerate(embeddings_list):
@@ -35,17 +32,11 @@ def upsert_embeddings(collection_name: str, embeddings_list, texts_list):
 
 def query_collection(collection_name, query_text, limit=5):
     try:
-        from create_embeddings import generate_embeddings
+        query_embedding = emb.embed_query(query_text)
 
-        # Generate embedding for the query text
-        query_embedding = generate_embeddings(query_text)
-
-        # Search for similar vectors
         search_result = client.query_points(
             collection_name=collection_name,
-            query=query_embedding[0].tolist()
-            if hasattr(query_embedding[0], "tolist")
-            else query_embedding[0],
+            query=query_embedding,
             limit=limit,
         )
 

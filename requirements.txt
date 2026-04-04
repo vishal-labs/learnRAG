@@ -33,6 +33,7 @@ langchain==1.2.15
 langchain-classic==1.0.3
 langchain-community==0.4.1
 langchain-core==1.2.24
+langchain-experimental==0.4.1
 langchain-openrouter==0.2.1
 langchain-qdrant==1.1.0
 langchain-text-splitters==1.1.1

@@ -7,7 +7,7 @@ COLLECTION_NAME = "pdf_embeddings_collection"
 
 
 def main():
-    # pdf_processing_pipeline("QA.pdf")
+    # pdf_processing_pipeline("Practical-Vim.pdf")
     query = str(input("What do you want to ask about this pdf?: \n"))
     query_result = query_collection(
         collection_name=COLLECTION_NAME,
@@ -23,6 +23,7 @@ def main():
     context = "\n\n---\n\n".join(context_texts)
     llm_result = get_result_from_model(db_result=context, query=query)
     print(llm_result)
+    # delete_collection(collection_name=COLLECTION_NAME)
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            "You are a helpful AI assistant that answers questions based on the provided context. Keep the answers consise and simple. Let the user know if the answer from context or not",
+            "You are a helpful AI assistant that answers questions based on the provided context. Keep the answers consise and simple. Let the user know if the answer from context or not, after answering the question, give the user 5 MCQs from the context.",
         ),
         ("user", "Context: {context}\n\nQuestion: {question}\n\nAnswer:"),
     ]
